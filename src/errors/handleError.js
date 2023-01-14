@@ -1,13 +1,11 @@
-const {errorResponse} = require('../utils/commonUtils')
-const {UploadError} = require('./UploadError')
-const {NotFoundError} = require('./NotFoundError')
-const {ValidationError} = require('./ValidationError')
-const {AuthenticationError} = require('./AuthenticationError')
-const {AuthorizationError} = require('./AuthorizationError')
+const { errorResponse } = require('../utils/commonUtils')
+const { UploadError } = require('./UploadError')
+const { NotFoundError } = require('./NotFoundError')
+const { ValidationError } = require('./ValidationError')
+const { AuthenticationError } = require('./AuthenticationError')
+const { AuthorizationError } = require('./AuthorizationError')
 const { app_debug } = require('../../config/serverConfig')
 const multer = require('multer')
-
-const showStackTrace = err => app_debug === true && {stackTrace: err.stack} 
 
 exports.handleError = function handleError(app) {
 
@@ -21,12 +19,21 @@ exports.handleError = function handleError(app) {
             return next('There was an unhandled error!')
         }
 
-        if(err?.respond) {
+        if (err?.respond) {
             return err.respond(res)
         }
 
-        return res.status(500).send(errorResponse(
-            500, [{msg: 'Internal Server Error'}, showStackTrace(err)]
-        ))
+        if (err && err instanceof multer.MulterError) {
+            const response = [{ 'msg': err.message || 'There was error while uploading file' }]
+            return res.status(422).send(errorResponse(422, response))
+        }
+
+        const response = [{ msg: 'Internal Server Error' }]
+
+        if (app_debug && app_debug === 'true') {
+            response.push({ stackTrace: err.stack })
+        }
+
+        return res.status(500).send(errorResponse(500, response))
     })
 }

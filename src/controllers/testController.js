@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const User = require("../database/payment_station_cms/objectionOrm/models/User");
+const User = require("../database/paymentStation/objectionOrm/models/User");
 const { route } = require('express/lib/application');
 
 exports.testAction = async function testAction (req, res, next) {

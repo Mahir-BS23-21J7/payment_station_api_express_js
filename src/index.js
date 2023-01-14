@@ -1,5 +1,5 @@
 const express = require('express')
-const pscDbInit = require('./database/payment_station_cms/objectionOrm/conn')
+const pscDbInit = require('./database/paymentStation/objectionOrm/conn')
 const bootServer = require('./server')
 const {initiateRoutes} = require('./routes')
 
